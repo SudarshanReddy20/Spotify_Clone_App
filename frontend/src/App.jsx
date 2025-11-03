@@ -23,6 +23,7 @@ function App() {
   const [playingSongId, setPlayingSongId] = useState(false);
   const [progress, setProgress] = useState(0)
   const [duration, setDuration] = useState(0)
+  const [isshuffle, setIsShuffle] = useState(false)
 
   useEffect(() => {
     const audio = audioRef.current
@@ -52,6 +53,13 @@ function App() {
       audio.removeEventListener('ended', handleEnded)
     }
   },[])
+
+  const formatTime = time => {
+    if (isNaN(time)) return '0:00'
+    const minutes = Math.floor(time / 60)
+    const seconds = Math.floor(time % 60).toString().padStart(2, '0')
+    return `${minutes}:${seconds}`
+  }
 
   const handleSeek = (e) => {
     const newTime = parseFloat(e.target.value)
@@ -110,12 +118,27 @@ function App() {
 
   const handleNext = ()=>{
     const currentIndex = songs.findIndex(song => song.id == playingSongId)
-    const nextIndex = currentIndex == songs.length - 1 ? 0 : currentIndex + 1;
+    if(isshuffle){
+      let randIndex;
+      var nextIndex;
+      do{
+        randIndex = Math.floor(Math.random() * songs.length);
+      }
+      while(randIndex == currentIndex) 
+        nextIndex = randIndex;
+    }
+    else{
+      nextIndex = currentIndex == songs.length - 1 ? 0 : currentIndex + 1;
+    }
     const nextSong = songs[nextIndex];
     setPlayingSongId(nextSong.id)
     audioRef.current.src = nextSong.audio
     audioRef.current.play();
     setIsPaused(true);
+  }
+
+  const toggleShuffle = () => {
+    setIsShuffle(prev => !prev);
   }
 
  
@@ -213,7 +236,7 @@ function App() {
               </div>
               <div className="flex items-center justify-center flex-1 max-w-[40%] flex-col">
                 <div className="flex items-center gap-4 mb-2">
-                  <button className="text-gray-400 text-2xl">
+                  <button className={`${isshuffle ? "text-green-500" :  "text-gray-400" } text-2xl`} onClick={toggleShuffle}>
                     <FaRandom size={16} />
                   </button>
                   <button className="text-gray-400 text-2xl" onClick={handlePrevious}>
@@ -232,7 +255,7 @@ function App() {
 
                 <div className="flex items-center gap-2 w-full">
                   <span className="text-xs text-gray-400 min-w-10 text-right">
-                    0:02
+                    {formatTime(progress)}
                   </span>
                   <input
                     type="range"
@@ -243,7 +266,7 @@ function App() {
                     className="flex-1 h-1 accent-green-500 cursor-pointer"
                   />
                   <span className="text-xs text-gray-400 min-w-10 text-right">
-                    3:42
+                    {formatTime(duration)}
                   </span>
                 </div>
               </div>
