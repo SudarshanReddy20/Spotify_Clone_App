@@ -13,6 +13,7 @@ import {
   FaStepForward,
   FaRedo,
   FaVolumeUp,
+  FaVolumeMute,
 } from "react-icons/fa";
 
 function App() {
@@ -21,9 +22,31 @@ function App() {
   const [isFocused, setIsFocused] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
   const [playingSongId, setPlayingSongId] = useState(false);
-  const [progress, setProgress] = useState(0)
-  const [duration, setDuration] = useState(0)
-  const [isshuffle, setIsShuffle] = useState(false)
+  const [progress, setProgress] = useState(0);
+  const [duration, setDuration] = useState(0);
+  const [isshuffle, setIsShuffle] = useState(false);
+  const [volume, setVolume] = useState(1);
+  const [ismuted, setIsMuted] = useState(false);
+  const [repeatMode, setRepeatMode] = useState('none'); // 'none', 'all', 'one'
+
+  const toggleRepeat = () => {
+    setRepeatMode(prev => {
+      if(prev === 'none') return 'all';
+      if(prev === 'all') return 'one';
+      return 'none';
+    });
+  };
+
+  const toggleMute = () => {
+    if(ismuted){
+      audioRef.current.volume = volume;
+      setIsMuted(false);
+    }
+    else{
+      audioRef.current.volume = 0;
+      setIsMuted(true);
+    }
+  };
 
   useEffect(() => {
     const audio = audioRef.current
@@ -52,7 +75,7 @@ function App() {
       audio.removeEventListener('loadedmetadata', updateProgress)
       audio.removeEventListener('ended', handleEnded)
     }
-  },[])
+  },[repeatMode]);
 
   const formatTime = time => {
     if (isNaN(time)) return '0:00'
@@ -141,7 +164,17 @@ function App() {
     setIsShuffle(prev => !prev);
   }
 
- 
+  const handleVolume = (e) => {
+    const newVolume = parseFloat(e.target.value);
+    setVolume(newVolume);
+    audioRef.current.volume = newVolume;
+    if(newVolume === 0){
+      setIsMuted(true);
+    }
+    else{
+      setIsMuted(false);
+    }
+  };
 
   return (
     <>
@@ -248,8 +281,8 @@ function App() {
                   <button className="text-gray-400 text-2xl" onClick={handleNext}>
                     <FaStepForward size={16} />
                   </button>
-                  <button className="text-gray-400 text-2xl">
-                    <FaRedo size={16} />
+                  <button title={`Repeat : ${repeatMode}`} className={`text-2xl ${repeatMode != 'none' ? "text-green-500" : "text-gray-400"}`} onClick={toggleRepeat}>
+                    <FaRedo size={16} /> {repeatMode === 'one' ? <span className="text-xs absolute  -mt-5 ml-3">1</span> : null}
                   </button>
                 </div>
 
@@ -271,12 +304,19 @@ function App() {
                 </div>
               </div>
               <div className="flex items-center justify-end gap-2 min-w-[180px] w-[30%] mr-10">
-                <button className="text-gray-400 text-2xl">
-                  <FaVolumeUp size={16} />
+                <button className="text-gray-400 text-2xl" onClick={toggleMute}>
+                  {
+                    ismuted ? (<FaVolumeMute size={16} />) : (<FaVolumeUp size={16} />)
+                  }
                 </button>
                 <input
                   type="range"
+                  min={0}
+                  max={1}
+                  step={0.01}
+                  value={ismuted ? 0 : volume}
                   className="accent-green-500 h-1 w-24 cursor-pointer"
+                  onChange={handleVolume}
                 />
               </div>
             </div>
