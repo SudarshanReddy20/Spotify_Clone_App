@@ -1,0 +1,62 @@
+# === Django Backend ===
+__pycache__/
+*.py[cod]
+*.py.class
+
+# Virtual environments
+venv/
+env/
+.venv/
+ENV/
+
+# Environment variables
+.env
+*.env
+.env.*
+
+# Django-specific
+db.sqlite3
+*.log
+local_settings.py
+
+# User uploads & collected static
+media/
+staticfiles/
+# If collectstatic outputs here:
+static/
+
+# Tests and coverage
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+.nox/
+.mypy_cache/
+.ruff_cache/
+coverage.xml
+
+# IDE and editor configs
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# OS junk
+.DS_Store
+Thumbs.db
+
+# Optional: ignore migrations during dev
+# ** Comment out if you want to commit migrations **
+# backend/**/migrations/
+# !backend/**/migrations/__init__.py
+
+# === Node / Frontend linking ===
+# Ignore node_modules and build output in frontend (if accessed from backend)
+frontend/node_modules/
+frontend/dist/
+frontend/dist-ssr/
+frontend/.local/
+
+# === Global logs ===
+*.log
+logs/

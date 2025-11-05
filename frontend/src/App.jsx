@@ -75,7 +75,7 @@ function App() {
       audio.removeEventListener('loadedmetadata', updateProgress)
       audio.removeEventListener('ended', handleEnded)
     }
-  },[repeatMode]);
+  },[progress]);
 
   const formatTime = time => {
     if (isNaN(time)) return '0:00'
