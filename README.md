@@ -1,7 +1,3 @@
----
-
-## `Spotify-Clone/README.md`
-```markdown
 # Spotify-Clone
 
 **UI-first music player demo (React) with a light Django API for sample tracks.**  
